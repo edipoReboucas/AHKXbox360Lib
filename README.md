@@ -67,6 +67,14 @@ Loop {
         ToolTip, Player One Press RB
     }
 
+    if (value := player1.LT) {
+        ToolTip, Player One Press LT, Analog Value : %value% (0-255)
+    }
+
+    if (value := player1.RT) {
+        ToolTip, Player One Press RT, Analog Value : %value% (0-255)
+    }
+
 ;Left Stick
     if (player1.LS) {
         ToolTip, Player One Press LS
@@ -85,7 +93,7 @@ Loop {
 
 ;Left Stick Y Movement
     if (value := player1.LSY) {
-        asDigital := player1.LSY > 0 ? "Right" : "Left"
+        asDigital := player1.LSY > 0 ? "Up" : "Down"
         ToolTip, Player One Move Left Sick In Y Axis, Analog Value : %value%, Digital: %asDigital%
     }
 
@@ -97,7 +105,7 @@ Loop {
 
 ;Right Stick Y(Left/Right) Movement
     if (value := player1.RSY) {
-        asDigital := player1.RSY > 0 ? "Right" : "Left"
+        asDigital := player1.RSY > 0 ? "Up" : "Down"
         ToolTip, Player One Move Right Sick In Y Axis, Analog Value : %value%, Digital: %asDigital%
     }
 
