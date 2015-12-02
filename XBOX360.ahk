@@ -81,8 +81,8 @@ Class Xbox360LibXInput {
 		return DllCall(this.getStateAddress, "UInt", index, "UPtr", stateOutAddress)
 	}
 
-	GetKeystroke(index, keystoreOutAddress) {
- 		return DllCall(this.getKeystrokeAddress, "UInt", index, "UInt", 0, "UPtr", keystoreOutAddress)
+	GetKeystroke(index, keystrokeOutAddress) {
+ 		return DllCall(this.getKeystrokeAddress, "UInt", index, "UInt", 0, "UPtr", keystrokeOutAddress)
 	}
 
 	GetBatteryInformation(index, type, batteryOutAddress) {
