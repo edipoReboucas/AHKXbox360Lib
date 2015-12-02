@@ -91,7 +91,7 @@ Loop {
 
 ;Left Stick X(Left/Right) Movement
     if (value := player1.LSX) {
-        asDigital := player1.LSX > 0 ? "Right" : "Left"
+        asDigital := player1.LSX < 0 ? "Left" : "Right"
         msg .= "Player One Move Left Sick In X Axis, Analog Value : " . value . ", Digital: " . asDigital . "`n"
     }
 
@@ -103,7 +103,7 @@ Loop {
 
 ;Right Stick X(Left/Right) Movement
     if (value := player1.RSX) {
-        asDigital := player1.RSX > 0 ? "Right" : "Left"
+        asDigital := player1.RSX < 0 ? "Left" : "Right"
         msg .= "Player One Move Right Sick In X Axis, Analog Value : " . value . ", Digital: " . asDigital . "`n"
     }
 
