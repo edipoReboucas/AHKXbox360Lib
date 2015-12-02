@@ -31,3 +31,5 @@ Loop {
 }
 ```
 
+See examples/debug.ahk for a detailed example.
+
