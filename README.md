@@ -20,11 +20,11 @@ Loop {
     player1.update()
 
     if (player1.UP) {
-        ToolTip, UP
+        ToolTip, Player One Press Up
     }
 
     if (player1.DOWN) {
-        ToolTip, DOWN
+        ToolTip, Player One Press Down
     }
 
     Sleep 5
