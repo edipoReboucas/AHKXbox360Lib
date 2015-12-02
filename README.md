@@ -17,7 +17,7 @@ player1 := manager.InitializeController(0)
 Loop {
 
 ;Update state of controller
-    player1.update()
+    player1.Update()
 
     if (player1.GUIDE) {
         ToolTip, Player One Press Guide
