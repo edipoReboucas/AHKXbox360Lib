@@ -117,4 +117,4 @@ Loop {
 }
 ```
 
-See [examples/debug.ahk](examples/debug.ahk) for a detailed example.
+See [docs/api.md](docs/api.md) for more details.
