@@ -85,13 +85,13 @@ Loop {
         ToolTip, Player One Press RS
     }
 
-;Left Stick X Movement
+;Left Stick X(Left/Right) Movement
     if (value := player1.LSX) {
 	asDigital := player1.LSX > 0 ? "Right" : "Left"
         ToolTip, Player One Move Left Sick In X Axis, Analog Value : %value%, Digital: %asDigital%
     }
 
-;Left Stick Y Movement
+;Left Stick Y(Up/Down) Movement
     if (value := player1.LSY) {
         asDigital := player1.LSY > 0 ? "Up" : "Down"
         ToolTip, Player One Move Left Sick In Y Axis, Analog Value : %value%, Digital: %asDigital%
@@ -103,7 +103,7 @@ Loop {
         ToolTip, Player One Move Right Sick In X Axis, Analog Value : %value%, Digital: %asDigital%
     }
 
-;Right Stick Y(Left/Right) Movement
+;Right Stick Y(Up/Down) Movement
     if (value := player1.RSY) {
         asDigital := player1.RSY > 0 ? "Up" : "Down"
         ToolTip, Player One Move Right Sick In Y Axis, Analog Value : %value%, Digital: %asDigital%
