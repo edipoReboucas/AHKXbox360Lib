@@ -1,9 +1,4 @@
-#AHKXbox360Lib: OOP Library of Xbox360 Controller for AHK
-
-## Usage:
-
-```ahk
-;Include the Library
+﻿;Include the Library
 #Include ../XBOX360.ahk
 
 ;Instance the Controller Manager
@@ -115,6 +110,3 @@ Loop {
     ToolTip, %msg%
     Sleep 5
 }
-```
-
-See [examples/debug.ahk](examples/debug.ahk) for a detailed example.
