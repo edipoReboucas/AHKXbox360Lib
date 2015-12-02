@@ -38,7 +38,7 @@ Xbox360LibController
         
 Xbox360LibControllerManager
     Methods:
-        initializeController ( index: int ) : Xbox360LibController
+        initializeController ( index: Int ) : Xbox360LibController
 
 Xbox360Lib.Enum.Buttons
     Attributes
