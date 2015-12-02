@@ -9,23 +9,25 @@
 ;Instance the Controller Manager
 manager := new Xbox360LibControllerManager()
 
-;Initialize Controller (0-3), can be four controllers
+;Initialize Controller (0-3), you can use 4 controllers
 player1 := manager.InitializeController(0)
 
 
 ;Make something useful
 Loop {
 
+;Update state of controller
+    player1.update()
+
     if (player1.UP) {
         ToolTip, UP
     }
 
-    if(player1.DOWN) {
+    if (player1.DOWN) {
         ToolTip, DOWN
     }
 
     Sleep 5
 }
 ```
-
 
