@@ -59,186 +59,226 @@ Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.RSX] := 8689
 Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.RSY] := 8689
 
 Class Xbox360LibXInput {
-	moduleAddress                :=
-	getStateAddress              :=
-	getKeystrokeAddress          :=
-	getBatteryInformationAddress :=
-	
+    moduleAddress                :=
+    getStateAddress              :=
+    getKeystrokeAddress          :=
+    getBatteryInformationAddress :=
 	dllNames := ["Xinput1_4", "Xinput1_3", "Xinput_9_1_0"]
 	
-	__New() {
-		this.LoadLibrary()
-		this.getStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"UInt", 100, "UPtr")
-		this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetKeystroke", "UPtr")
-		this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetBatteryInformation", "UPtr")
-	}
-	
-	__Delete() {
-		DllCall("FreeLibrary", "UPtr", this.moduleAddress)
-	}
-	
-	GetState(index, stateOutAddress) {
-		return DllCall(this.getStateAddress, "UInt", index, "UPtr", stateOutAddress)
-	}
+    __New() {
+        this.LoadLibrary()
+        this.getStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"UInt", 100, "UPtr")
+        this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetKeystroke", "UPtr")
+        this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetBatteryInformation", "UPtr")
+    }
 
-	GetKeystroke(index, keystrokeOutAddress) {
- 		return DllCall(this.getKeystrokeAddress, "UInt", index, "UInt", 0, "UPtr", keystrokeOutAddress)
-	}
+    __Delete() {
+        DllCall("FreeLibrary", "UPtr", this.moduleAddress)
+    }
 
-	GetBatteryInformation(index, type, batteryOutAddress) {
- 		return DllCall(this.getBatteryInformationAddress, , "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
-	}
-	
-	LoadLibrary() {
-		For key, dllname in this.dllNames
-		{
-			this.moduleAddress := DllCall("LoadLibrary", "Str", dllname, "UPtr")
-			if(this.moduleAddress) {
-				break
-			}
-		}
-		
-		if(!this.moduleAddress) {
-			throw "not found xinput dll"
-		}
-	}
+    /**
+     * @return int
+     */
+    GetState(index, stateOutAddress) {
+        return DllCall(this.getStateAddress, "UInt", index, "UPtr", stateOutAddress)
+    }
+
+    /**
+     * @return int
+     */
+    GetKeystroke(index, keystrokeOutAddress) {
+        return DllCall(this.getKeystrokeAddress, "UInt", index, "UInt", 0, "UPtr", keystrokeOutAddress)
+    }
+
+    /**
+     * @return int
+     */
+    GetBatteryInformation(index, type, batteryOutAddress) {
+        return DllCall(this.getBatteryInformationAddress, , "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
+    }
+
+    /**
+     * @return void
+     */
+    LoadLibrary() {
+        For key, dllname in this.dllNames
+        {
+            this.moduleAddress := DllCall("LoadLibrary", "Str", dllname, "UPtr")
+            if(this.moduleAddress) {
+                break
+            }
+        }
+
+        if(!this.moduleAddress) {
+            throw "not found xinput dll"
+        }
+    }
 }
 
 Class Xbox360LibController {
-	
-	index     :=
-	state     :=
-	wbuttons  :=
-	keystroke :=
-	error     :=
-	deadzone  :=
-	threshold :=
-	xgamepad  :=
-	xbuttons  :=
-	buttons   :=
-	xinput    :=
-	
-	__New(index, xinput) {
-		global Xbox360Lib
-		this.index     := index
-		this.deadzone  := Xbox360Lib.Enum.Deadzone
-		this.threshold := Xbox360Lib.Enum.Threshold
-		this.xgamepad  := Xbox360Lib.Enum.XInputStateGamepad
-		this.xbuttons  := Xbox360Lib.Enum.XInputStateButtons
-		this.buttons   := Xbox360Lib.Enum.Buttons
-		this.xinput    := xinput
-		this.setCapacity("state", 32)
-		this.setCapacity("keystroke", 32)
-	}
-	
-	__Get(attributeName) {
-		if (attributeName == "IsConnected") {
-			return this.IsConnected()
-		}
-		
-		if(!this.IsConnected()){
-			return 0
-		}
 
-		if(!this.ButtonExist(attributeName)) {
-			return 0
-		}
+    index     :=
+    state     :=
+    wbuttons  :=
+    keystroke :=
+    error     :=
+    deadzone  :=
+    threshold :=
+    xgamepad  :=
+    xbuttons  :=
+    buttons   :=
+    xinput    :=
 
-		buttonCode := this.GetButtonCode(attributeName)
+    __New(index, xinput) {
+        global Xbox360Lib
+        this.index     := index
+        this.deadzone  := Xbox360Lib.Enum.Deadzone
+        this.threshold := Xbox360Lib.Enum.Threshold
+        this.xgamepad  := Xbox360Lib.Enum.XInputStateGamepad
+        this.xbuttons  := Xbox360Lib.Enum.XInputStateButtons
+        this.buttons   := Xbox360Lib.Enum.Buttons
+        this.xinput    := xinput
+        this.setCapacity("state", 32)
+        this.setCapacity("keystroke", 32)
+    }
 
-		if (this.IsDigitalButton(buttonCode)) {
-	        return this.IsDigitalButtonActive(buttonCode)
-		}
-		
-		if (this.IsAnalogButton(buttonCode)) {
-	        return this.GetAnalogButtonValue(buttonCode)
-		}
-	
-		return 0
-	}
-	
-	ButtonExist(buttonName) {
-	  if (this.buttons[buttonName]) {
-		return true
-	  } else {
-		return false
-	  }
-	}
-	
-	GetButtonCode(buttonName) {
-		return this.buttons[buttonName]
-	}
-	
-	IsDigitalButton(buttonCode) {
-		if (this.xbuttons[buttonCode]) {
-			return true
-		} else {
-			return false
-		}
-	}
-	
-	IsDigitalButtonActive(buttonCode) {
-		wButtons := NumGet(this.getAddress("state"),  4, "UShort")
-		if (wButtons & this.xbuttons[buttonCode]) {
-			return true
-		} else{
-			return false
-		}
-	}
+    __Get(attributeName) {
+        if (attributeName == "IsConnected") {
+            return this.IsConnected()
+        }
 
-	IsAnalogButton(buttonCode) {
-		if (this.xgamepad[buttonCode]) {
-			return true
-		} else {
-			return false
-		}
-	}
+        if(!this.IsConnected()){
+            return 0
+        }
 
-	GetAnalogButtonValue(buttonCode) {
-		config := this.xgamepad[buttonCode]
-		deadzoneOrThreshold := this.deadzone[buttonCode] ? this.deadzone[buttonCode] : this.threshold[buttonCode]
-		value := NumGet(this.GetAddress("state"),  config.code, config.type)
-		if (abs(value) > deadzoneOrThreshold) {
-			return value
-		} else {
-			return 0
-		}
-	}
+        if(!this.ButtonExist(attributeName)) {
+            return 0
+        }
 
-	Update() {
-		this.error := this.xinput.getState(this.index, this.GetAddress("state"))
-	}
+        buttonCode := this.GetButtonCode(attributeName)
 
-	IsConnected() {
-		return !this.error
-	}
-	
-	GetError() {
-		return this.error
-	}
+        if (this.IsDigitalButton(buttonCode)) {
+            return this.IsDigitalButtonActive(buttonCode)
+        }
+
+        if (this.IsAnalogButton(buttonCode)) {
+            return this.GetAnalogButtonValue(buttonCode)
+        }
+
+        return 0
+    }
+
+    /**
+     * @return bool
+     */
+    ButtonExist(buttonName) {
+        if (this.buttons[buttonName]) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * @return int
+     */
+    GetButtonCode(buttonName) {
+        return this.buttons[buttonName]
+    }
+
+    /**
+     * @return bool
+     */
+    IsDigitalButton(buttonCode) {
+        if (this.xbuttons[buttonCode]) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    /**
+     * @return bool
+     */
+    IsDigitalButtonActive(buttonCode) {
+        wButtons := NumGet(this.getAddress("state"),  4, "UShort")
+        if (wButtons & this.xbuttons[buttonCode]) {
+            return true
+        } else{
+            return false
+        }
+    }
+
+     /**
+     * @return bool
+     */
+    IsAnalogButton(buttonCode) {
+        if (this.xgamepad[buttonCode]) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * @return int
+     */
+    GetAnalogButtonValue(buttonCode) {
+        config := this.xgamepad[buttonCode]
+        deadzoneOrThreshold := this.deadzone[buttonCode] ? this.deadzone[buttonCode] : this.threshold[buttonCode]
+        value := NumGet(this.GetAddress("state"),  config.code, config.type)
+        if (abs(value) > deadzoneOrThreshold) {
+            return value
+        } else {
+            return 0
+        }
+    }
+
+    /**
+     * @return void
+     */
+    Update() {
+        this.error := this.xinput.getState(this.index, this.GetAddress("state"))
+    }
+
+    /**
+     * @return bool
+     */
+    IsConnected() {
+        return !this.error
+    }
+
+    /**
+     * @return int
+     */
+    GetError() {
+        return this.error
+    }
 }
 
 Class Xbox360LibControllerManager {
-	static instance :=
-	controls := []
-	xinput   :=
+    
+    static instance :=
+    controls := []
+    xinput   :=
 
-	__New() {
-		if(Xbox360LibControllerManager.instance) {
-			return this.instance
-		} else {
-			this.xinput := new Xbox360LibXInput()
-			Xbox360LibControllerManager.instance := this
-		}
-	}
-	/*
-		@return Xbox360LibController
-	*/	
-	InitializeController(index) {
-		if(this.controls[index]) {
-			return this.controls[index]
-		}
-		this.controls[index] := new Xbox360LibController(index, this.xinput)
-		return this.controls[index]
-	}
+    __New() {
+        if(Xbox360LibControllerManager.instance) {
+            return this.instance
+        } else {
+            this.xinput := new Xbox360LibXInput()
+            Xbox360LibControllerManager.instance := this
+        }
+    }
+
+    /**
+     * @return Xbox360LibController
+     */	
+    InitializeController(index) {
+        if(this.controls[index]) {
+            return this.controls[index]
+        }
+        this.controls[index] := new Xbox360LibController(index, this.xinput)
+        return this.controls[index]
+    }
 }
