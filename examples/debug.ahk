@@ -1,12 +1,12 @@
 #NoEnv
-#Include XBOX360.ahk
+#Include ../XBOX360.ahk
 
 x360 := []
 
 manager :=  new Xbox360LibControllerManager()
 
 loop 4 {
-	x360[A_Index -1] := manager.initializeController(A_Index -1)
+	x360[A_Index -1] := manager.InitializeController(A_Index -1)
 }
 
 CoordMode, ToolTip, Screen

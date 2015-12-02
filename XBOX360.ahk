@@ -234,7 +234,7 @@ Class Xbox360LibControllerManager {
 	/*
 		@return Xbox360LibController
 	*/	
-	initializeController(index) {
+	InitializeController(index) {
 		if(this.controls[index]) {
 			return this.controls[index]
 		}
