@@ -3,33 +3,48 @@
 ```
 Xbox360LibXInput
     Methods:
-        + GetState ( index : UInt,  out stateOutAddress : UPtr) : Int
-        + GetKeystroke ( index : UInt,  out keystoreOutAddress : UPtr) : Int
-        + GetBatteryInformation ( index : UInt, type: UChar, out keystoreOutAddress : UPtr) : Int
-    
+        + GetState ( index : UInt,  out stateOutAddress : UPtr ) : Int
+	+ SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
+        + GetKeystroke ( index : UInt,  out keystoreOutAddress : UPtr ) : Int
+        + GetBatteryInformation ( index : UInt, type: UChar, out keystoreOutAddress : UPtr ) : Int
+
+
+Xbox360LibXInputVibration
+    Attributes:
+        + leftMotorSpeed : Int (0 - 65535)
+	+ rightMotorSpeed : Int (0 - 65535)
+	+ raw : Short
+	+ address : Int
+    Methods:
+        + ParseToBinaryFormat
+
+
 Xbox360LibController
     Attributes:
-        + GUIDE : Bool
-        + BACK : Bool
-        + START : Bool
-        + LEFT : Bool
-        + RIGHT : Bool
-        + UP : Bool
-        + DOWN : Bool
-        + LEFT : Bool
-        + RIGHT : Bool
-        + A : Bool
-        + B : Bool
-        + X : Bool
-        + Y : Bool
-        + LB : Bool
-        + RB : Bool
-        + LS : Bool
-        + RS : Bool
-        + LT : Int (0 - 255)
-        + RT : Int (0 - 255)
-        + LSX : Int (-32768 - 32767)
-        + RSX : Int (-32768 - 32767)
+        + GUIDE : Bool readOnly
+        + BACK : Bool readOnly
+        + START : Bool readOnly
+        + LEFT : Bool  readOnly
+        + RIGHT : Bool readOnly
+        + UP : Bool readOnly
+        + DOWN : Bool readOnly
+        + LEFT : Bool readOnly
+        + RIGHT : Bool readOnly
+        + A : Bool readOnly
+        + B : Bool readOnly
+        + X : Bool readOnly
+        + Y : Bool readOnly
+        + LB : Bool readOnly
+        + RB : Bool readOnly
+        + LS : Bool readOnly
+        + RS : Bool readOnly
+        + LT : Int (0 - 255) readOnly
+        + RT : Int (0 - 255) readOnly
+        + LSX : Int (-32768 - 32767) readOnly
+        + RSX : Int (-32768 - 32767) readOnly
+	+ BV : Array<LeftMotorSpeed : Int (0 - 65535), RightMotorSpeed: (0 - 65535)>
+	+ LV : Int (0 - 65535)
+	+ RV : Int (0 - 65535)
     Methods:
         + __New ( index : Int, xinput : Xbox360LibXInput)
         + Update ()

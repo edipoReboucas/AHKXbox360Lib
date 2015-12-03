@@ -25,6 +25,7 @@ Xbox360Lib.Enum.Buttons.LSY   := 29
 Xbox360Lib.Enum.Buttons.RSX   := 20
 Xbox360Lib.Enum.Buttons.RSY   := 21
 
+
 Xbox360Lib.Enum.XInputStateButtons := {}
 Xbox360Lib.Enum.XInputStateButtons[Xbox360Lib.Enum.Buttons.UP]    := 0x0001
 Xbox360Lib.Enum.XInputStateButtons[Xbox360Lib.Enum.Buttons.DOWN]  := 0x0002
@@ -50,13 +51,39 @@ Xbox360Lib.Enum.XInputStateGamepad[Xbox360Lib.Enum.Buttons.LSY] := {code: 10, ty
 Xbox360Lib.Enum.XInputStateGamepad[Xbox360Lib.Enum.Buttons.RSX] := {code: 12, type: "Short"}
 Xbox360Lib.Enum.XInputStateGamepad[Xbox360Lib.Enum.Buttons.RSY] := {code: 14, type: "Short"}
 
+Xbox360Lib.Enum.Threshold := {}
 Xbox360Lib.Enum.Threshold[Xbox360Lib.Enum.Buttons.LT] := 30
 Xbox360Lib.Enum.Threshold[Xbox360Lib.Enum.Buttons.RT] := 30
 
+Xbox360Lib.Enum.Deadzone := {}
 Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.LSX] := 7849
 Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.LSY] := 7849
 Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.RSX] := 8689
 Xbox360Lib.Enum.Deadzone[Xbox360Lib.Enum.Buttons.RSY] := 8689
+
+Xbox360Lib.Enum.Motor := {}
+Xbox360Lib.Enum.Motor.LV := 1
+Xbox360Lib.Enum.Motor.RV := 2
+Xbox360Lib.Enum.Motor.BV := 3
+
+
+Class Xbox360LibXInputVibration {
+    leftMotorSpeed  := 0
+    rightMotorSpeed := 0
+    raw             :=
+    address         :=
+    
+    __New() {
+        this.SetCapacity("raw", 4)
+        this.address := this.GetAddress("raw")
+    }
+
+    ParseToBinaryFormat() {
+        NumPut(this.leftMotorSpeed, this.address,  0, "UShort")
+        NumPut(this.rightMotorSpeed, this.address, 2, "UShort")
+        return this
+    }
+}
 
 Class Xbox360LibXInput {
     moduleAddress                :=
@@ -68,12 +95,9 @@ Class Xbox360LibXInput {
     __New() {
         this.LoadLibrary()
         this.getStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"UInt", 100, "UPtr")
-        this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetKeystroke", "UPtr")
-        this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"Str", "XInputGetBatteryInformation", "UPtr")
-    }
-
-    __Delete() {
-        DllCall("FreeLibrary", "UPtr", this.moduleAddress)
+        this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetKeystroke", "UPtr")
+        this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetBatteryInformation", "UPtr")
+		this.setStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputSetState", "UPtr")
     }
 
     /**
@@ -96,6 +120,12 @@ Class Xbox360LibXInput {
     GetBatteryInformation(index, type, batteryOutAddress) {
         return DllCall(this.getBatteryInformationAddress, , "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
     }
+    /**
+     * @return int
+     */
+	SetState(index, xvibration) {
+ 		return DllCall(this.setStateAddress, "UInt", index, "UInt", xvibration.ParseToBinaryFormat().address)
+	}    
 
     /**
      * @return void
@@ -113,49 +143,59 @@ Class Xbox360LibXInput {
             throw "not found xinput dll"
         }
     }
+    
+    FreeLibrary() {
+        DllCall("FreeLibrary", "UPtr", this.moduleAddress)
+    }
 }
 
 Class Xbox360LibController {
 
-    index     :=
-    state     :=
-    wbuttons  :=
-    keystroke :=
-    error     :=
-    deadzone  :=
-    threshold :=
-    xgamepad  :=
-    xbuttons  :=
-    buttons   :=
-    xinput    :=
+    index      :=
+    state      :=
+    wbuttons   :=
+    error      :=
+    deadzone   :=
+    threshold  :=
+    xgamepad   :=
+    xbuttons   :=
+    buttons    :=
+    xinput     :=
+    xvibration :=
+    motor      :=
 
     __New(index, xinput) {
         global Xbox360Lib
-        this.index     := index
-        this.deadzone  := Xbox360Lib.Enum.Deadzone
-        this.threshold := Xbox360Lib.Enum.Threshold
-        this.xgamepad  := Xbox360Lib.Enum.XInputStateGamepad
-        this.xbuttons  := Xbox360Lib.Enum.XInputStateButtons
-        this.buttons   := Xbox360Lib.Enum.Buttons
-        this.xinput    := xinput
-        this.setCapacity("state", 32)
-        this.setCapacity("keystroke", 32)
+        this.motor      := Xbox360Lib.Enum.Motor        
+        this.index      := index
+        this.xinput     := xinput
+        this.xvibration := new Xbox360LibXInputVibration()
+        this.deadzone   := Xbox360Lib.Enum.Deadzone
+        this.threshold  := Xbox360Lib.Enum.Threshold
+        this.xgamepad   := Xbox360Lib.Enum.XInputStateGamepad
+        this.buttons    := Xbox360Lib.Enum.Buttons
+        this.xbuttons   := Xbox360Lib.Enum.XInputStateButtons
+        this.setCapacity("state", 16)
     }
-
-    __Get(attributeName) {
-        if (attributeName == "IsConnected") {
+    
+    __Get(name) {
+        if (name == "IsConnected") {
             return this.IsConnected()
         }
 
-        if(!this.IsConnected()){
+        if (!this.IsConnected()){
             return 0
         }
 
-        if(!this.ButtonExist(attributeName)) {
+        if (this.IsMotor(name)) {
+            return this.GetMotorSpeed(name)
+        }
+        
+        if (!this.ButtonExist(name)) {
             return 0
         }
 
-        buttonCode := this.GetButtonCode(attributeName)
+        buttonCode := this.GetButtonCode(name)
 
         if (this.IsDigitalButton(buttonCode)) {
             return this.IsDigitalButtonActive(buttonCode)
@@ -164,10 +204,18 @@ Class Xbox360LibController {
         if (this.IsAnalogButton(buttonCode)) {
             return this.GetAnalogButtonValue(buttonCode)
         }
-
+        
+        
         return 0
     }
-
+    
+    __Set(name, value) {
+        if (this.IsMotor(name)) {
+            return this.SetMotorSpeed(name, value)
+        }
+    }
+    
+    
     /**
      * @return bool
      */
@@ -233,6 +281,80 @@ Class Xbox360LibController {
             return 0
         }
     }
+
+
+    IsMotor(motorName) {
+        global Xbox360Lib
+        if (Xbox360Lib.Enum.Motor[motorName]) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    GetMotorSpeed(motorName) {
+        if (motorName == "LV") {
+            return this.xvibration.leftMotorSpeed
+        }
+
+        if (motorName == "RV") {
+            return this.xvibration.rightMotorSpeed
+        }
+
+        if (motorName == "BV") {
+            return [this.xvibration.leftMotorSpeed, this.xvibration.rightMotorSpeed]
+        }
+    }
+    
+    SetMotorSpeed(motorName, value) {
+        if (motorName == "LV") {
+            this.LeftVibration(value)
+            return value
+        }
+
+        if (motorName == "RV") {
+            this.RightVibration(value)
+            return value            
+        }
+
+        if (motorName == "BV") {
+            this.BothVibration(value)
+            return value
+        }
+    }
+    
+    
+    /**
+     * @return void
+     */
+    BothVibration(motorSpeed) {
+        if (var is integer) {
+            this.xvibration.leftMotorSpeed  := motorSpeed 
+            this.xvibration.rightMotorSpeed := motorSpeed 
+        } else {
+            this.xvibration.leftMotorSpeed  :=  motorSpeed[1]
+            this.xvibration.rightMotorSpeed :=  motorSpeed[2]
+        }
+        this.error := this.xinput.SetState(this.index, this.xvibration)
+    }
+    
+
+    /**
+     * @return void
+     */
+    LeftVibration(leftMotorSpeed) {
+        this.xvibration.leftMotorSpeed  := leftMotorSpeed 
+        this.error := this.xinput.SetState(this.index, this.xvibration)
+    }
+
+    /**
+     * @return void
+     */
+    RightVibration(rightMotorSpeed) {
+        this.xvibration.rightMotorSpeed := rightMotorSpeed 
+        this.error := this.xinput.SetState(this.index, this.xvibration)
+    }
+
 
     /**
      * @return void

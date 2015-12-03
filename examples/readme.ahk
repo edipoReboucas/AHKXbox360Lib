@@ -12,8 +12,9 @@ player1 := manager.InitializeController(0)
 Loop {
     msg := ""
 ;Update state of controller
+
     player1.Update()
-    
+
     if (player1.GUIDE) {
         msg .= "Player One Press Guide`n"
     }
@@ -74,6 +75,18 @@ Loop {
         msg .= "Player One Press RT`, Analog Value : " . value . " (0-255)`n"
     }
 
+    if (value := player1.LV) {
+        msg .= "Left Motor Speed : " . value . "`n"
+    }
+
+    if (value := player1.RV) {
+        msg .= "Right Motor Speed : " . value . "`n"
+    }
+
+    if (value := player1.BV && (value[0] || value[1])) {
+        msg .= " Both Motor Speed, Left: " . value[1] . ", Right: " . value[2] . "`n"
+    }
+
 ;Left Stick
     if (player1.LS) {
         msg .= "Player One Press LS`n"
@@ -107,6 +120,12 @@ Loop {
         asDigital := player1.RSY > 0 ? "Up" : "Down"
         msg .= "Player One Move Right Sick In Y Axis, Analog Value : " . value . ", Digital: " . asDigital . "`n"
     }
+
+;Vibration, Move Left And Right sticks
+    leftMotorSpeed := Ceil((Abs(player1.LSY) + Abs(player1.LSX)) / 64932 * 65532)
+    rightMotorSpeed := Ceil((Abs(player1.RSY) + Abs(player1.RSX)) / 64932 * 65532)
+    player1.BV := [leftMotorSpeed, rightMotorSpeed]
+    
     ToolTip, %msg%
     Sleep 5
 }
