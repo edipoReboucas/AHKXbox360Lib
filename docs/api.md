@@ -11,10 +11,10 @@ Xbox360LibXInput
 
 Xbox360LibXInputVibration
     Attributes:
-    + leftMotorSpeed : Int (0 - 65535)
-    + rightMotorSpeed : Int (0 - 65535)
-    + raw : Short
-    + address : Int
+        + leftMotorSpeed : Int (0 - 65535)
+        + rightMotorSpeed : Int (0 - 65535)
+        + raw : Short
+        + address : Int
     Methods:
         + ParseToBinaryFormat
 
@@ -42,9 +42,9 @@ Xbox360LibController
         + RT : Int (0 - 255) readOnly
         + LSX : Int (-32768 - 32767) readOnly
         + RSX : Int (-32768 - 32767) readOnly
-	+ BV : Array<LeftMotorSpeed : Int (0 - 65535), RightMotorSpeed: (0 - 65535)>
-	+ LV : Int (0 - 65535)
-	+ RV : Int (0 - 65535)
+        + BV : Array<LeftMotorSpeed : Int (0 - 65535), RightMotorSpeed: (0 - 65535)>
+        + LV : Int (0 - 65535)
+        + RV : Int (0 - 65535)
     Methods:
         + __New ( index : Int, xinput : Xbox360LibXInput)
         + Update ()
