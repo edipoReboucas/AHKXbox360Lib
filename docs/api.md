@@ -4,7 +4,7 @@
 Xbox360LibXInput
     Methods:
         + GetState ( index : UInt,  out stateOutAddress : UPtr ) : Int
-	+ SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
+        + SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
         + GetKeystroke ( index : UInt,  out keystoreOutAddress : UPtr ) : Int
         + GetBatteryInformation ( index : UInt, type: UChar, out keystoreOutAddress : UPtr ) : Int
 
