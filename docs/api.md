@@ -11,10 +11,10 @@ Xbox360LibXInput
 
 Xbox360LibXInputVibration
     Attributes:
-        + leftMotorSpeed : Int (0 - 65535)
-	+ rightMotorSpeed : Int (0 - 65535)
-	+ raw : Short
-	+ address : Int
+    + leftMotorSpeed : Int (0 - 65535)
+    + rightMotorSpeed : Int (0 - 65535)
+    + raw : Short
+    + address : Int
     Methods:
         + ParseToBinaryFormat
 
