@@ -97,7 +97,7 @@ Class Xbox360LibXInput {
         this.getStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"UInt", 100, "UPtr")
         this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetKeystroke", "UPtr")
         this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetBatteryInformation", "UPtr")
-		this.setStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputSetState", "UPtr")
+        this.setStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputSetState", "UPtr")
     }
 
     /**

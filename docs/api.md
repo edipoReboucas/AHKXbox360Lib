@@ -4,7 +4,7 @@
 Xbox360LibXInput
     Methods:
         + GetState ( index : UInt,  out stateOutAddress : UPtr ) : Int
-	+ SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
+        + SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
         + GetKeystroke ( index : UInt,  out keystoreOutAddress : UPtr ) : Int
         + GetBatteryInformation ( index : UInt, type: UChar, out keystoreOutAddress : UPtr ) : Int
 
@@ -12,9 +12,9 @@ Xbox360LibXInput
 Xbox360LibXInputVibration
     Attributes:
         + leftMotorSpeed : Int (0 - 65535)
-	+ rightMotorSpeed : Int (0 - 65535)
-	+ raw : Short
-	+ address : Int
+        + rightMotorSpeed : Int (0 - 65535)
+        + raw : Short
+        + address : Int
     Methods:
         + ParseToBinaryFormat
 
@@ -42,9 +42,9 @@ Xbox360LibController
         + RT : Int (0 - 255) readOnly
         + LSX : Int (-32768 - 32767) readOnly
         + RSX : Int (-32768 - 32767) readOnly
-	+ BV : Array<LeftMotorSpeed : Int (0 - 65535), RightMotorSpeed: (0 - 65535)>
-	+ LV : Int (0 - 65535)
-	+ RV : Int (0 - 65535)
+        + BV : Array<LeftMotorSpeed : Int (0 - 65535), RightMotorSpeed: (0 - 65535)>
+        + LV : Int (0 - 65535)
+        + RV : Int (0 - 65535)
     Methods:
         + __New ( index : Int, xinput : Xbox360LibXInput)
         + Update ()
