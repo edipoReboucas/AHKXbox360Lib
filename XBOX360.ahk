@@ -328,7 +328,7 @@ Class Xbox360LibController {
      * @return void
      */
     BothVibration(motorSpeed) {
-        if (var is integer) {
+        if (motorSpeed is integer) {
             this.xvibration.leftMotorSpeed  := motorSpeed 
             this.xvibration.rightMotorSpeed := motorSpeed 
         } else {
