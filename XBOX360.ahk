@@ -118,7 +118,7 @@ Class Xbox360LibXInput {
      * @return int
      */
     GetBatteryInformation(index, type, batteryOutAddress) {
-        return DllCall(this.getBatteryInformationAddress, , "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
+        return DllCall(this.getBatteryInformationAddress, "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
     }
     /**
      * @return int
