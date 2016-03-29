@@ -120,6 +120,26 @@ Class Xbox360LibXInput {
     GetBatteryInformation(index, type, batteryOutAddress) {
         return DllCall(this.getBatteryInformationAddress, "UInt", index, "UChar", type, "UPtr", batteryOutAddress)
     }
+ 
+    /**
+     * @return int
+     */ 
+	GetGamepadBatteryLevelValue(index) {
+		VarSetCapacity(batteryOutAddress, 2)
+		if (this.GetBatteryInformation(index, 0, &batteryOutAddress) == 0)
+			return NumGet(batteryOutAddress, 1, "UChar")
+		else
+			return -1   ; -1 for "Unknown", different to 0 for "Empty"
+	}
+    
+    /**
+     * @return string
+     */
+    GetGamepadBatteryLevelName(index) {
+        static names := {-1: "Unknown", 0: "Empty", 1: "Low", 2: "Medium", 3: "Full"}
+        return names[this.GetGamepadBatteryLevelValue(index)]
+    }
+    
     /**
      * @return int
      */
