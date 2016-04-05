@@ -125,7 +125,8 @@ Loop {
     leftMotorSpeed := Ceil((Abs(player1.LSY) + Abs(player1.LSX)) / 64932 * 65532)
     rightMotorSpeed := Ceil((Abs(player1.RSY) + Abs(player1.RSX)) / 64932 * 65532)
     player1.BV := [leftMotorSpeed, rightMotorSpeed]
-    
+    if (msg)
+        msg .= "Player One Battery Level: " manager.xinput.GetGamepadBatteryLevelName(0) "`n"
     ToolTip, %msg%
     Sleep 5
 }
