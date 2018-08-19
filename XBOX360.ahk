@@ -90,6 +90,8 @@ Class Xbox360LibXInput {
     getStateAddress              :=
     getKeystrokeAddress          :=
     getBatteryInformationAddress :=
+    setStateAddress              :=
+    powerOffControllerAddress    :=
 	dllNames := ["Xinput1_4", "Xinput1_3", "Xinput_9_1_0"]
 	
     __New() {
@@ -98,6 +100,7 @@ Class Xbox360LibXInput {
         this.getKeystrokeAddress          := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetKeystroke", "UPtr")
         this.getBatteryInformationAddress := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputGetBatteryInformation", "UPtr")
         this.setStateAddress              := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"AStr", "XInputSetState", "UPtr")
+        this.powerOffControllerAddress    := DllCall("GetProcAddress" ,"UPtr", this.moduleAddress ,"UInt", 103, "UPtr")
     }
 
     /**
@@ -145,7 +148,14 @@ Class Xbox360LibXInput {
      */
 	SetState(index, xvibration) {
  		return DllCall(this.setStateAddress, "UInt", index, "UInt", xvibration.ParseToBinaryFormat().address)
-	}    
+	}
+
+    /**
+     * @return int
+     */
+    CallPowerOffController(index) {
+        return DllCall(this.powerOffControllerAddress, "UInt", index)
+    }    
 
     /**
      * @return void
@@ -422,5 +432,12 @@ Class Xbox360LibControllerManager {
         }
         this.controls[index] := new Xbox360LibController(index, this.xinput)
         return this.controls[index]
+    }
+
+    /**
+    * @brief Power off the controler 0-3
+    */
+    PowerOffController(index) {
+        this.xinput.CallPowerOffController(index)
     }
 }
