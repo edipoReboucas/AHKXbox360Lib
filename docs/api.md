@@ -7,6 +7,7 @@ Xbox360LibXInput
         + SetState ( index : Uint, inout xvibration : Xbox360LibXInputVibration ) : Int
         + GetKeystroke ( index : UInt,  out keystoreOutAddress : UPtr ) : Int
         + GetBatteryInformation ( index : UInt, type: UChar, out keystoreOutAddress : UPtr ) : Int
+        + CallPowerOffController ( index : UInt ) : Int
 
 
 Xbox360LibXInputVibration
@@ -53,7 +54,8 @@ Xbox360LibController
         
 Xbox360LibControllerManager
     Methods:
-        initializeController ( index: Int ) : Xbox360LibController
+        InitializeController ( index : Int ) : Xbox360LibController
+        PowerOffController ( index : Int )
 
 Xbox360Lib.Enum.Buttons
     Attributes
